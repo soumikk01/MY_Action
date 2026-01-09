@@ -1,6 +1,8 @@
+import { useState, useEffect } from 'react'
 import './App.css'
 import avatar from './assets/avatar.png'
 import StarField from './components/StarField'
+import AdminPanel from './components/AdminPanel'
 
 // Social Media Icons as SVG components
 const LinkedInIcon = () => (
@@ -52,9 +54,10 @@ const linkButtons = [
   { name: 'Instagram Editing Page', url: 'https://instagram.com/logcos2x' },
 ]
 
-// Projects data
-const projects = [
+// Default Projects data
+const defaultProjects = [
   {
+    id: '1',
     name: 'Portfolio Website',
     description: 'A modern portfolio website built with React and animated backgrounds.',
     tech: ['React', 'CSS3', 'Vite'],
@@ -62,6 +65,7 @@ const projects = [
     demo: '#',
   },
   {
+    id: '2',
     name: 'Exam Portal',
     description: 'Student examination portal with QR code integration and schedule management.',
     tech: ['PHP', 'MySQL', 'JavaScript'],
@@ -69,6 +73,7 @@ const projects = [
     demo: '#',
   },
   {
+    id: '3',
     name: 'Video Editor Projects',
     description: 'Professional video editing and motion graphics portfolio.',
     tech: ['After Effects', 'Premiere Pro'],
@@ -76,6 +81,14 @@ const projects = [
     demo: '#',
   },
 ]
+
+// Settings Icon for Admin toggle
+const SettingsIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="3" />
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+  </svg>
+)
 
 // External Link Icon
 const ExternalLinkIcon = () => (
@@ -173,13 +186,13 @@ function ProjectCard({ project }) {
 }
 
 // Projects Section Component
-function ProjectsSection() {
+function ProjectsSection({ projects }) {
   return (
     <div className="projects-section">
       <h2 className="section-title">Projects</h2>
       <div className="projects-grid">
         {projects.map((project) => (
-          <ProjectCard key={project.name} project={project} />
+          <ProjectCard key={project.id || project.name} project={project} />
         ))}
       </div>
     </div>
@@ -188,7 +201,82 @@ function ProjectsSection() {
 
 
 
+// Admin Password (change this to your preferred password)
+const ADMIN_PASSWORD = 'admin123'
+
+// Password Modal Component
+function PasswordModal({ onSuccess, onClose }) {
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (password === ADMIN_PASSWORD) {
+      onSuccess()
+    } else {
+      setError('Incorrect password')
+      setPassword('')
+    }
+  }
+
+  return (
+    <div className="password-modal-overlay" onClick={onClose}>
+      <div className="password-modal" onClick={e => e.stopPropagation()}>
+        <h3>🔒 Admin Access</h3>
+        <p>Enter password to access admin panel</p>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value)
+              setError('')
+            }}
+            placeholder="Enter password"
+            autoFocus
+          />
+          {error && <span className="password-error">{error}</span>}
+          <div className="password-actions">
+            <button type="button" onClick={onClose}>Cancel</button>
+            <button type="submit">Unlock</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 function App() {
+  const [projects, setProjects] = useState(() => {
+    const saved = localStorage.getItem('linktree-projects')
+    return saved ? JSON.parse(saved) : defaultProjects
+  })
+  const [showAdmin, setShowAdmin] = useState(false)
+  const [showPasswordModal, setShowPasswordModal] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+  useEffect(() => {
+    localStorage.setItem('linktree-projects', JSON.stringify(projects))
+  }, [projects])
+
+  const handleAdminClick = () => {
+    if (isAuthenticated) {
+      setShowAdmin(true)
+    } else {
+      setShowPasswordModal(true)
+    }
+  }
+
+  const handlePasswordSuccess = () => {
+    setIsAuthenticated(true)
+    setShowPasswordModal(false)
+    setShowAdmin(true)
+  }
+
+  const handleUpdateProjects = (newProjects) => {
+    setProjects(newProjects)
+  }
+
   return (
     <div className="app">
       <StarField />
@@ -196,9 +284,35 @@ function App() {
         <ProfileCard />
         <SocialIcons />
         <LinksContainer />
-        <ProjectsSection />
+        <ProjectsSection projects={projects} />
         <JoinButton />
       </main>
+
+      {/* Admin Toggle Button */}
+      <button
+        className="admin-toggle"
+        onClick={handleAdminClick}
+        title="Manage Projects"
+      >
+        <SettingsIcon />
+      </button>
+
+      {/* Password Modal */}
+      {showPasswordModal && (
+        <PasswordModal
+          onSuccess={handlePasswordSuccess}
+          onClose={() => setShowPasswordModal(false)}
+        />
+      )}
+
+      {/* Admin Panel */}
+      {showAdmin && (
+        <AdminPanel
+          projects={projects}
+          onUpdateProjects={handleUpdateProjects}
+          onClose={() => setShowAdmin(false)}
+        />
+      )}
     </div>
   )
 }
