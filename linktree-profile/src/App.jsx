@@ -47,11 +47,148 @@ const socialLinks = [
 ]
 
 // Link buttons data
-const linkButtons = [
-  { name: 'LinkedIn', url: 'https://linkedin.com/in/soumikpaul' },
-  { name: 'GitHub', url: 'https://github.com/soumikk01' },
-  { name: 'YouTube', url: 'https://youtube.com/@soumikpaul' },
-  { name: 'Instagram Editing Page', url: 'https://instagram.com/logcos2x' },
+const linkButtons = []
+
+// Tech Tree data with Roadmap Steps
+const techTree = [
+  {
+    id: 'step-1',
+    step: 'Step 1',
+    name: 'Web Fundamentals',
+    icon: '🌐',
+    color: 'blue',
+    children: [
+      {
+        id: 'web-internet',
+        name: 'Internet basics',
+        icon: '☁️',
+        items: [
+          { name: 'DNS', icon: '📡' },
+          { name: 'HTTP/HTTPS', icon: '🔒' },
+          { name: 'Browsers', icon: '🌐' },
+        ],
+      },
+      {
+        id: 'frontend-basics',
+        name: 'Frontend Basics',
+        icon: '🎨',
+        items: [
+          { name: 'HTML5', icon: '📄' },
+          { name: 'CSS3', icon: '🎨' },
+          { name: 'JavaScript', icon: '🟨' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'step-2',
+    step: 'Step 2',
+    name: 'Frontend Frameworks',
+    icon: '⚡',
+    color: 'red',
+    children: [
+      {
+        id: 'react-ecosystem',
+        name: 'React Ecosystem',
+        icon: '⚛️',
+        items: [
+          { name: 'React', icon: '⚛️' },
+          { name: 'Vite', icon: '⚡' },
+          { name: 'Hooks', icon: '🪝' },
+        ],
+      },
+      {
+        id: 'styling-libs',
+        name: 'Modern Styling',
+        icon: '💅',
+        items: [
+          { name: 'Tailwind CSS', icon: '🌊' },
+          { name: 'Styled Components', icon: '💅' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'step-3',
+    step: 'Step 3',
+    name: 'Backend & APIs',
+    icon: '⚙️',
+    color: 'yellow',
+    children: [
+      {
+        id: 'backend-runtime',
+        name: 'Runtimes',
+        icon: '🟩',
+        items: [
+          { name: 'Node.js', icon: '🟩' },
+          { name: 'PHP', icon: '🐘' },
+        ],
+      },
+      {
+        id: 'api-design',
+        name: 'APIs',
+        icon: '🔌',
+        items: [
+          { name: 'REST', icon: '🔗' },
+          { name: 'GraphQL', icon: '💠' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'step-4',
+    step: 'Step 4',
+    name: 'Databases',
+    icon: '🗃️',
+    color: 'green',
+    children: [
+      {
+        id: 'relational-db',
+        name: 'Relational',
+        icon: '📊',
+        items: [
+          { name: 'MySQL', icon: '🐬' },
+          { name: 'PostgreSQL', icon: '🐘' },
+        ],
+      },
+      {
+        id: 'nosql-db',
+        name: 'NoSQL',
+        icon: '🍃',
+        items: [
+          { name: 'MongoDB', icon: '🍃' },
+          { name: 'Redis', icon: '🟥' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'step-5',
+    step: 'Step 5',
+    name: 'Development Tools',
+    icon: '🛠️',
+    color: 'purple',
+    children: [
+      {
+        id: 'version-control',
+        name: 'VCS',
+        icon: '📦',
+        items: [
+          { name: 'Git', icon: '📦' },
+          { name: 'GitHub', icon: '🐙' },
+        ],
+      },
+      {
+        id: 'video-editing',
+        name: 'Video & Motion',
+        icon: '🎬',
+        items: [
+          { name: 'After Effects', icon: '🎬' },
+          { name: 'Premiere Pro', icon: '🎥' },
+        ],
+      },
+    ],
+  },
 ]
 
 // Default Projects data
@@ -101,6 +238,94 @@ const ExternalLinkIcon = () => (
 
 
 
+function HeroSection() {
+  return (
+    <section className="hero-section">
+      {/* Greeting Line */}
+      <div className="hero-greeting">
+        <span className="greeting-line"></span>
+        <span className="greeting-text">Hello, I'm Soumik</span>
+      </div>
+
+      {/* Main Hero Content */}
+      <div className="hero-main">
+        <div className="hero-left">
+          <h1 className="hero-title-creative">Creative</h1>
+        </div>
+
+        <div className="hero-avatar-wrapper">
+          <img src={avatar} alt="Soumik Biswas" className="hero-avatar" />
+        </div>
+
+        <div className="hero-right">
+          <h1 className="hero-title-developer">Developer.</h1>
+        </div>
+      </div>
+
+      {/* Description */}
+      <p className="hero-description">
+        I'm an experienced <strong>Full Stack Developer</strong> with <strong>Over 5 years</strong> of
+        experience, specializing in creating innovative digital
+        products used by thousands worldwide.
+      </p>
+    </section>
+  )
+}
+
+function FooterSection() {
+  return (
+    <footer className="footer-section">
+      {/* Decorative Circle Left */}
+      <div className="footer-decor-left">
+        <div className="decor-circle">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <path d="M9 3v18M15 3v18M3 9h18M3 15h18" />
+          </svg>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="footer-main">
+        <h2 className="footer-thanks">
+          Thanks <span className="thanks-highlight">for</span> <span className="thanks-box">scrolling</span> <span className="thanks-emoji">😊</span>
+        </h2>
+
+        {/* Scroll Arrow */}
+        <div className="footer-scroll-indicator">
+          <div className="scroll-ellipse"></div>
+          <div className="scroll-arrow">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 16l-6-6h12l-6 6z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      {/* SB Badge Right */}
+      <div className="footer-badge">
+        <div className="sb-badge">
+          <div className="sb-inner">
+            <span>SB</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Row */}
+      <div className="footer-bottom">
+        <div className="powered-by">
+          <span>Powered by</span>
+          <span className="powered-icon">⚡</span>
+        </div>
+        <div className="support-text">
+          <span className="heart-icon">💖</span>
+          <span>PRESS L for support</span>
+        </div>
+      </div>
+    </footer>
+  )
+}
+
 function ProfileCard() {
   return (
     <div className="profile-section">
@@ -134,13 +359,26 @@ function SocialIcons() {
   )
 }
 
-function LinkButton({ name, url }) {
+function LinkButton({ name, url, isAnchor }) {
+  const handleClick = (e) => {
+    if (isAnchor) {
+      e.preventDefault()
+      const element = document.querySelector(url)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+  }
+
   return (
-    <a href={url} target="_blank" rel="noopener noreferrer" className="link-button">
+    <a
+      href={url}
+      target={isAnchor ? undefined : '_blank'}
+      rel={isAnchor ? undefined : 'noopener noreferrer'}
+      className="link-button"
+      onClick={handleClick}
+    >
       <span className="link-button-text">{name}</span>
-      <span className="link-button-menu">
-        <MenuDotsIcon />
-      </span>
     </a>
   )
 }
@@ -149,8 +387,102 @@ function LinksContainer() {
   return (
     <div className="links-container">
       {linkButtons.map((link) => (
-        <LinkButton key={link.name} name={link.name} url={link.url} />
+        <LinkButton key={link.name} name={link.name} url={link.url} isAnchor={link.isAnchor} />
       ))}
+    </div>
+  )
+}
+
+// Tree Branch Icon
+const TreeBranchIcon = ({ isExpanded }) => (
+  <svg
+    width="12"
+    height="12"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={`tree-arrow ${isExpanded ? 'expanded' : ''}`}
+  >
+    <polyline points="9 18 15 12 9 6" />
+  </svg>
+)
+
+// Tech Section Component with Tree Structure
+function TechSection() {
+  const [expandedBranches, setExpandedBranches] = useState({})
+  const [expandedSubBranches, setExpandedSubBranches] = useState({})
+
+  const toggleBranch = (id) => {
+    setExpandedBranches(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }))
+  }
+
+  const toggleSubBranch = (id) => {
+    setExpandedSubBranches(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }))
+  }
+
+  return (
+    <div id="tech-section" className="tech-section">
+      <h2 className="section-title">Tech Stack</h2>
+
+      <div className="tech-tree">
+        {techTree.map((branch) => (
+          <div key={branch.id} className={`tree-branch ${branch.color}`}>
+            {/* Main Branch */}
+            <button
+              className={`tree-branch-header ${expandedBranches[branch.id] ? 'active' : ''}`}
+              onClick={() => toggleBranch(branch.id)}
+            >
+              <div className="branch-step-container">
+                <span className="step-label">{branch.step}</span>
+                <span className="branch-name-main">{branch.name}</span>
+              </div>
+              <span className="tree-icon">{branch.icon}</span>
+              <TreeBranchIcon isExpanded={expandedBranches[branch.id]} />
+            </button>
+
+            {/* Sub Branches */}
+            <div className={`tree-children ${expandedBranches[branch.id] ? 'expanded' : ''}`}>
+              {branch.children.map((child) => (
+                <div key={child.id} className="tree-sub-branch">
+                  <button
+                    className={`tree-sub-header ${expandedSubBranches[child.id] ? 'active' : ''}`}
+                    onClick={() => toggleSubBranch(child.id)}
+                  >
+                    <span className="tree-connector"></span>
+                    <span className="tree-icon-small">{child.icon}</span>
+                    <span className="tree-sub-name">{child.name}</span>
+                    <TreeBranchIcon isExpanded={expandedSubBranches[child.id]} />
+                  </button>
+
+                  {/* Leaf Items */}
+                  <div className={`tree-items ${expandedSubBranches[child.id] ? 'expanded' : ''}`}>
+                    {child.items.map((item, index) => (
+                      <div
+                        key={item.name}
+                        className="tree-leaf"
+                        style={{ animationDelay: `${index * 0.05}s` }}
+                      >
+                        <span className="leaf-connector"></span>
+                        <span className="leaf-icon">{item.icon}</span>
+                        <span className="leaf-name">{item.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
@@ -281,11 +613,11 @@ function App() {
     <div className="app">
       <StarField />
       <main className="main-content">
-        <ProfileCard />
+        <HeroSection />
         <SocialIcons />
-        <LinksContainer />
+        <TechSection />
         <ProjectsSection projects={projects} />
-        <JoinButton />
+        <FooterSection />
       </main>
 
       {/* Admin Toggle Button */}
