@@ -11,7 +11,6 @@ const EARTH_TEXTURES = {
     ocean: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_specular_2048.jpg',
     clouds: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_clouds_1024.png',
     night: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_lights_2048.png',
-    galaxy: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/galaxy.jpg',
 }
 
 // Custom hook for mouse position
@@ -94,7 +93,7 @@ function Earth({ mouseX, mouseY, scrollY }) {
     const nightRef = useRef()
 
     // Load all textures
-    const [albedoMap, bumpMap, oceanMap, cloudsMap, nightMap, galaxyMap] = useLoader(
+    const [albedoMap, bumpMap, oceanMap, cloudsMap, nightMap] = useLoader(
         THREE.TextureLoader,
         [
             EARTH_TEXTURES.albedo,
@@ -102,7 +101,6 @@ function Earth({ mouseX, mouseY, scrollY }) {
             EARTH_TEXTURES.ocean,
             EARTH_TEXTURES.clouds,
             EARTH_TEXTURES.night,
-            EARTH_TEXTURES.galaxy,
         ]
     )
 
@@ -135,7 +133,7 @@ function Earth({ mouseX, mouseY, scrollY }) {
 
             groupRef.current.rotation.x = THREE.MathUtils.lerp(
                 groupRef.current.rotation.x,
-                targetRotationY, // Note: Switching X/Y for more natural feel on desktop
+                targetRotationY,
                 0.05
             )
             groupRef.current.rotation.y = THREE.MathUtils.lerp(
@@ -145,7 +143,7 @@ function Earth({ mouseX, mouseY, scrollY }) {
             )
             groupRef.current.rotation.z = axialTilt
 
-            // Scroll parallax - move Earth and add slight rotation
+            // Scroll parallax - move Earth
             const scrollOffset = scrollY * 0.002
             groupRef.current.position.y = THREE.MathUtils.lerp(
                 groupRef.current.position.y,
@@ -156,10 +154,18 @@ function Earth({ mouseX, mouseY, scrollY }) {
             // Sync uv_xOffset for cloud shadows
             if (earthRef.current.material && earthRef.current.material.userData.shader) {
                 const shader = earthRef.current.material.userData.shader
-                // Use a constant delta for smooth linear progression
-                const offset = (0.016 * 0.02) / (2 * Math.PI) // 60fps estimate for offset
-                shader.uniforms.uv_xOffset.value += offset % 1
+                shader.uniforms.uv_xOffset.value += 0.0001
             }
+        }
+    })
+
+    const moonRef = useRef()
+    useFrame((state) => {
+        if (moonRef.current) {
+            const t = state.clock.elapsedTime * 0.1
+            moonRef.current.position.x = Math.cos(t) * 10
+            moonRef.current.position.z = Math.sin(t) * 10
+            moonRef.current.rotation.y += 0.002
         }
     })
 
@@ -235,30 +241,23 @@ function Earth({ mouseX, mouseY, scrollY }) {
                 />
             </mesh>
 
-            {/* Atmospheric glow - Outer Rim */}
-            <mesh ref={atmosRef} scale={1.12}>
-                <sphereGeometry args={[2, 64, 64]} />
+            {/* Realistic Atmosphere Halo */}
+            <mesh ref={atmosRef} scale={1.2}>
+                <sphereGeometry args={[2, 32, 32]} />
                 <atmosphereMaterial
                     transparent
                     blending={THREE.AdditiveBlending}
                     side={THREE.BackSide}
-                    atmOpacity={0.6}
-                    atmPowFactor={4.1}
-                    atmMultiplier={9.5}
+                    atmOpacity={0.3}
+                    atmPowFactor={3.5}
+                    atmMultiplier={8.0}
                 />
             </mesh>
 
-            {/* Atmosphere Halo - Extra Bloom/Detail */}
-            <mesh scale={1.2}>
-                <sphereGeometry args={[2, 64, 64]} />
-                <atmosphereMaterial
-                    transparent
-                    blending={THREE.AdditiveBlending}
-                    side={THREE.BackSide}
-                    atmOpacity={0.2}
-                    atmPowFactor={2.0}
-                    atmMultiplier={3.0}
-                />
+            {/* Simple Moon */}
+            <mesh ref={moonRef} scale={0.15}>
+                <sphereGeometry args={[1, 12, 12]} />
+                <meshStandardMaterial color="#cccccc" roughness={0.9} />
             </mesh>
         </group>
     )
@@ -386,21 +385,28 @@ function Scene({ mouseX, mouseY, scrollY }) {
     return (
         <>
             {/* Lighting */}
-            <ambientLight intensity={0.1} />
+            <ambientLight intensity={0.05} />
             <directionalLight
-                position={[-10, 5, 5]}
-                intensity={2}
+                position={[-15, 10, 10]}
+                intensity={2.5}
                 color="#ffffff"
             />
-            <pointLight position={[10, 10, 10]} intensity={0.3} color="#a3e635" />
 
-            {/* Galaxy Background */}
-            <mesh rotation={[0, Math.PI / 2, 0]}>
-                <sphereGeometry args={[100, 64, 64]} />
-                <meshBasicMaterial
-                    map={galaxyMap}
-                    side={THREE.BackSide}
-                />
+            {/* Stars background - use Drei's optimized component */}
+            <Stars
+                radius={200}
+                depth={50}
+                count={7000}
+                factor={4}
+                saturation={0}
+                fade
+                speed={0.2}
+            />
+
+            {/* Sun Glow Representation */}
+            <mesh position={[-50, 30, 30]}>
+                <sphereGeometry args={[5, 32, 32]} />
+                <meshBasicMaterial color="#ffffcc" />
             </mesh>
 
             {/* Main Earth */}
