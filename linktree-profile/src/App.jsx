@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import avatar from './assets/avatar.png'
-import StarField from './components/StarField'
+import ThreeBackground from './components/ThreeBackground'
 import AdminPanel from './components/AdminPanel'
 
 // Social Media Icons as SVG components
@@ -611,7 +611,7 @@ function App() {
 
   return (
     <div className="app">
-      <StarField />
+      <ThreeBackground />
       <main className="main-content">
         <HeroSection />
         <SocialIcons />
