@@ -29,13 +29,7 @@ const InstagramIcon = () => (
   </svg>
 )
 
-const MenuDotsIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-    <circle cx="8" cy="3" r="1.5" />
-    <circle cx="8" cy="8" r="1.5" />
-    <circle cx="8" cy="13" r="1.5" />
-  </svg>
-)
+
 
 
 // Social links data
@@ -46,8 +40,7 @@ const socialLinks = [
   { name: 'Instagram', url: 'https://instagram.com/logcos2x', icon: InstagramIcon },
 ]
 
-// Link buttons data
-const linkButtons = []
+
 
 // Tech Tree data with Roadmap Steps
 const techTree = [
@@ -326,19 +319,7 @@ function FooterSection() {
   )
 }
 
-function ProfileCard() {
-  return (
-    <div className="profile-section">
-      <div className="avatar-container">
-        <img src={avatar} alt="Soumik Biswas" className="avatar" />
-      </div>
-      <div className="profile-info">
-        <h1 className="profile-name">Soumik Biswas</h1>
-        <p className="profile-bio">full time coder, part time editor</p>
-      </div>
-    </div>
-  )
-}
+
 
 function SocialIcons() {
   return (
@@ -359,39 +340,7 @@ function SocialIcons() {
   )
 }
 
-function LinkButton({ name, url, isAnchor }) {
-  const handleClick = (e) => {
-    if (isAnchor) {
-      e.preventDefault()
-      const element = document.querySelector(url)
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' })
-      }
-    }
-  }
 
-  return (
-    <a
-      href={url}
-      target={isAnchor ? undefined : '_blank'}
-      rel={isAnchor ? undefined : 'noopener noreferrer'}
-      className="link-button"
-      onClick={handleClick}
-    >
-      <span className="link-button-text">{name}</span>
-    </a>
-  )
-}
-
-function LinksContainer() {
-  return (
-    <div className="links-container">
-      {linkButtons.map((link) => (
-        <LinkButton key={link.name} name={link.name} url={link.url} isAnchor={link.isAnchor} />
-      ))}
-    </div>
-  )
-}
 
 // Tree Branch Icon
 const TreeBranchIcon = ({ isExpanded }) => (
@@ -487,15 +436,7 @@ function TechSection() {
   )
 }
 
-function JoinButton() {
-  return (
-    <div className="join-section">
-      <button className="join-button">
-        Join logcos2x on Linktree
-      </button>
-    </div>
-  )
-}
+
 
 // Project Card Component
 function ProjectCard({ project }) {

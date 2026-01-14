@@ -165,89 +165,7 @@
 }
 
 
-/* Profile Section */
-.profile-section {
-  width: 100%;
-  max-width: 420px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-xl);
-  animation: fadeInUp 0.6s ease-out;
-}
 
-/* Avatar Container */
-.avatar-container {
-  position: relative;
-}
-
-.avatar-container::before {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border-radius: var(--radius-full);
-  background: var(--accent-gradient);
-  opacity: 0;
-  transition: var(--transition-normal);
-  z-index: -1;
-  animation: rotateGlow 8s linear infinite;
-}
-
-.avatar-container:hover::before {
-  opacity: 0.6;
-  filter: blur(8px);
-}
-
-.avatar {
-  width: 120px;
-  height: 120px;
-  border-radius: var(--radius-full);
-  object-fit: cover;
-  border: 3px solid rgba(255, 255, 255, 0.2);
-  box-shadow: var(--shadow-md), var(--shadow-glow);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  animation: float 4s ease-in-out infinite, glowPulse 3s ease-in-out infinite;
-}
-
-.avatar:hover {
-  transform: scale(1.1) rotate(5deg);
-  border-color: rgba(102, 126, 234, 0.8);
-  box-shadow: var(--shadow-lg), 0 0 80px rgba(102, 126, 234, 0.4);
-}
-
-/* Profile Info */
-.profile-info {
-  text-align: center;
-}
-
-.profile-name {
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin-bottom: var(--spacing-xs);
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #667eea 50%, #764ba2 75%, #667eea 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: textGradient 4s ease infinite;
-  transition: var(--transition-normal);
-}
-
-.profile-name:hover {
-  animation: textGradient 1s ease infinite, pulse 0.5s ease;
-}
-
-.profile-bio {
-  font-size: 0.95rem;
-  color: var(--text-secondary);
-  font-weight: 400;
-  animation: fadeInUp 0.8s ease-out 0.2s both;
-  transition: var(--transition-normal);
-}
-
-.profile-bio:hover {
-  color: var(--text-primary);
-}
 
 /* Social Icons */
 .social-icons {
@@ -320,132 +238,9 @@
   animation: bounceIn 0.5s ease-out 0.7s both;
 }
 
-/* Links Container */
-.links-container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  margin-top: var(--spacing-md);
-}
 
-/* Link Button */
-.link-button {
-  width: 100%;
-  padding: var(--spacing-lg) var(--spacing-xl);
-  background: rgba(42, 42, 42, 0.8);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  overflow: hidden;
-}
 
-.link-button::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.6s ease;
-}
 
-.link-button::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--accent-gradient);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.link-button:hover {
-  transform: translateY(-4px) scale(1.01);
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), var(--shadow-md);
-}
-
-.link-button:hover::before {
-  transform: translateX(100%);
-}
-
-.link-button:hover::after {
-  opacity: 0.1;
-  background: white;
-}
-
-.link-button:active {
-  transform: translateY(0);
-}
-
-.link-button-text {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--text-primary);
-  position: relative;
-  z-index: 1;
-}
-
-.link-button-menu {
-  position: absolute;
-  right: var(--spacing-md);
-  color: var(--text-muted);
-  transition: var(--transition-fast);
-}
-
-.link-button:hover .link-button-menu {
-  color: var(--text-secondary);
-}
-
-/* Animation delays for links */
-.links-container .link-button:nth-child(1) {
-  animation: fadeInUp 0.5s ease-out 0.1s both;
-}
-
-.links-container .link-button:nth-child(2) {
-  animation: fadeInUp 0.5s ease-out 0.2s both;
-}
-
-.links-container .link-button:nth-child(3) {
-  animation: fadeInUp 0.5s ease-out 0.3s both;
-}
-
-.links-container .link-button:nth-child(4) {
-  animation: fadeInUp 0.5s ease-out 0.4s both;
-}
-
-/* Join Button */
-.join-section {
-  margin-top: var(--spacing-2xl);
-  animation: fadeInUp 0.5s ease-out 0.5s both;
-}
-
-.join-button {
-  padding: var(--spacing-md) var(--spacing-2xl);
-  background: var(--text-primary);
-  color: var(--bg-primary);
-  border: none;
-  border-radius: var(--radius-full);
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition-spring);
-  box-shadow: var(--shadow-sm);
-}
-
-.join-button:hover {
-  transform: scale(1.05);
-  box-shadow: var(--shadow-md);
-}
-
-.join-button:active {
-  transform: scale(0.98);
-}
 
 /* ============================================
    TECH SECTION - HIGH FIDELITY ROADMAP
@@ -1234,19 +1029,6 @@
     padding: var(--spacing-xl) var(--spacing-md);
     padding-top: 80px;
     padding-bottom: 100px;
-  }
-
-  .profile-name {
-    font-size: 1.5rem;
-  }
-
-  .avatar {
-    width: 100px;
-    height: 100px;
-  }
-
-  .link-button {
-    padding: var(--spacing-md) var(--spacing-lg);
   }
 }
 
