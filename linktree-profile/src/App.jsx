@@ -29,160 +29,67 @@ const InstagramIcon = () => (
   </svg>
 )
 
+const XIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+)
 
 
 
-// Social links data
+// Social links data for big icons section
+const bigSocialLinks = [
+  { name: 'LinkedIn', url: 'https://linkedin.com/in/soumikpaul', icon: LinkedInIcon },
+  { name: 'GitHub', url: 'https://github.com/soumikk01', icon: GitHubIcon },
+  { name: 'Instagram', url: 'https://instagram.com/logcos2x', icon: InstagramIcon },
+  { name: 'X', url: 'https://x.com/soumikpaul', icon: XIcon },
+]
+
+// Social links data (smaller, for header)
 const socialLinks = [
   { name: 'LinkedIn', url: 'https://linkedin.com/in/soumikpaul', icon: LinkedInIcon },
   { name: 'GitHub', url: 'https://github.com/soumikk01', icon: GitHubIcon },
-  { name: 'YouTube', url: 'https://youtube.com/@soumikpaul', icon: YouTubeIcon },
   { name: 'Instagram', url: 'https://instagram.com/logcos2x', icon: InstagramIcon },
+  { name: 'X', url: 'https://x.com/soumikpaul', icon: XIcon },
 ]
 
 
 
-// Tech Tree data with Roadmap Steps
-const techTree = [
-  {
-    id: 'step-1',
-    step: 'Step 1',
-    name: 'Web Fundamentals',
-    icon: '🌐',
-    color: 'blue',
-    children: [
-      {
-        id: 'web-internet',
-        name: 'Internet basics',
-        icon: '☁️',
-        items: [
-          { name: 'DNS', icon: '📡' },
-          { name: 'HTTP/HTTPS', icon: '🔒' },
-          { name: 'Browsers', icon: '🌐' },
-        ],
-      },
-      {
-        id: 'frontend-basics',
-        name: 'Frontend Basics',
-        icon: '🎨',
-        items: [
-          { name: 'HTML5', icon: '📄' },
-          { name: 'CSS3', icon: '🎨' },
-          { name: 'JavaScript', icon: '🟨' },
-        ],
-      },
-    ],
+// Roadmap Flowchart Data (matching the image design)
+const roadmapData = {
+  top: {
+    id: 'concept',
+    label: 'CONCEPT',
+    items: ['Visual Direction', 'Art Direction', 'Storyboarding'],
   },
-  {
-    id: 'step-2',
-    step: 'Step 2',
-    name: 'Frontend Frameworks',
-    icon: '⚡',
-    color: 'red',
-    children: [
-      {
-        id: 'react-ecosystem',
-        name: 'React Ecosystem',
-        icon: '⚛️',
-        items: [
-          { name: 'React', icon: '⚛️' },
-          { name: 'Vite', icon: '⚡' },
-          { name: 'Hooks', icon: '🪝' },
-        ],
-      },
-      {
-        id: 'styling-libs',
-        name: 'Modern Styling',
-        icon: '💅',
-        items: [
-          { name: 'Tailwind CSS', icon: '🌊' },
-          { name: 'Styled Components', icon: '💅' },
-        ],
-      },
-    ],
+  middle: [
+    {
+      id: 'discovery',
+      label: 'DISCOVERY',
+      items: ['Creative Brief', 'Brand Research', 'Mood Boards'],
+    },
+    {
+      id: 'design',
+      label: 'DESIGN',
+      items: ['UI/UX Craft', 'Motion Design', 'Interaction Design'],
+    },
+    {
+      id: 'polish',
+      label: 'POLISH',
+      items: ['Micro-interactions', 'Performance', 'Pixel Perfect'],
+    },
+    {
+      id: 'launch',
+      label: 'LAUNCH',
+      items: ['Go Live', 'Case Study', 'Awards Submit'],
+    },
+  ],
+  bottom: {
+    id: 'develop',
+    label: 'DEVELOP',
+    items: ['Creative Coding', 'WebGL & 3D', 'Animations'],
   },
-  {
-    id: 'step-3',
-    step: 'Step 3',
-    name: 'Backend & APIs',
-    icon: '⚙️',
-    color: 'yellow',
-    children: [
-      {
-        id: 'backend-runtime',
-        name: 'Runtimes',
-        icon: '🟩',
-        items: [
-          { name: 'Node.js', icon: '🟩' },
-          { name: 'PHP', icon: '🐘' },
-        ],
-      },
-      {
-        id: 'api-design',
-        name: 'APIs',
-        icon: '🔌',
-        items: [
-          { name: 'REST', icon: '🔗' },
-          { name: 'GraphQL', icon: '💠' },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'step-4',
-    step: 'Step 4',
-    name: 'Databases',
-    icon: '🗃️',
-    color: 'green',
-    children: [
-      {
-        id: 'relational-db',
-        name: 'Relational',
-        icon: '📊',
-        items: [
-          { name: 'MySQL', icon: '🐬' },
-          { name: 'PostgreSQL', icon: '🐘' },
-        ],
-      },
-      {
-        id: 'nosql-db',
-        name: 'NoSQL',
-        icon: '🍃',
-        items: [
-          { name: 'MongoDB', icon: '🍃' },
-          { name: 'Redis', icon: '🟥' },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'step-5',
-    step: 'Step 5',
-    name: 'Development Tools',
-    icon: '🛠️',
-    color: 'purple',
-    children: [
-      {
-        id: 'version-control',
-        name: 'VCS',
-        icon: '📦',
-        items: [
-          { name: 'Git', icon: '📦' },
-          { name: 'GitHub', icon: '🐙' },
-        ],
-      },
-      {
-        id: 'video-editing',
-        name: 'Video & Motion',
-        icon: '🎬',
-        items: [
-          { name: 'After Effects', icon: '🎬' },
-          { name: 'Premiere Pro', icon: '🎥' },
-        ],
-      },
-    ],
-  },
-]
+}
 
 // Default Projects data
 const defaultProjects = [
@@ -231,9 +138,11 @@ const ExternalLinkIcon = () => (
 
 
 
+import Navbar from './components/Navbar'
+
 function HeroSection() {
   return (
-    <section className="hero-section">
+    <div className="hero-section">
       {/* Greeting Line */}
       <div className="hero-greeting">
         <span className="greeting-line"></span>
@@ -261,13 +170,13 @@ function HeroSection() {
         experience, specializing in creating innovative digital
         products used by thousands worldwide.
       </p>
-    </section>
+    </div>
   )
 }
 
 function FooterSection() {
   return (
-    <footer className="footer-section">
+    <div className="footer-section">
       {/* Decorative Circle Left */}
       <div className="footer-decor-left">
         <div className="decor-circle">
@@ -315,7 +224,7 @@ function FooterSection() {
           <span>PRESS L for support</span>
         </div>
       </div>
-    </footer>
+    </div>
   )
 }
 
@@ -342,95 +251,65 @@ function SocialIcons() {
 
 
 
-// Tree Branch Icon
-const TreeBranchIcon = ({ isExpanded }) => (
-  <svg
-    width="12"
-    height="12"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={`tree-arrow ${isExpanded ? 'expanded' : ''}`}
-  >
-    <polyline points="9 18 15 12 9 6" />
-  </svg>
-)
-
-// Tech Section Component with Tree Structure
+// Tech Section Component - Flowchart Style
 function TechSection() {
-  const [expandedBranches, setExpandedBranches] = useState({})
-  const [expandedSubBranches, setExpandedSubBranches] = useState({})
-
-  const toggleBranch = (id) => {
-    setExpandedBranches(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }))
-  }
-
-  const toggleSubBranch = (id) => {
-    setExpandedSubBranches(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }))
-  }
-
   return (
-    <div id="tech-section" className="tech-section">
-      <h2 className="section-title">Tech Stack</h2>
+    <div className="tech-section">
+      <h2 className="section-title">My Process</h2>
 
-      <div className="tech-tree">
-        {techTree.map((branch) => (
-          <div key={branch.id} className={`tree-branch ${branch.color}`}>
-            {/* Main Branch */}
-            <button
-              className={`tree-branch-header ${expandedBranches[branch.id] ? 'active' : ''}`}
-              onClick={() => toggleBranch(branch.id)}
-            >
-              <div className="branch-step-container">
-                <span className="step-label">{branch.step}</span>
-                <span className="branch-name-main">{branch.name}</span>
-              </div>
-              <span className="tree-icon">{branch.icon}</span>
-              <TreeBranchIcon isExpanded={expandedBranches[branch.id]} />
-            </button>
-
-            {/* Sub Branches */}
-            <div className={`tree-children ${expandedBranches[branch.id] ? 'expanded' : ''}`}>
-              {branch.children.map((child) => (
-                <div key={child.id} className="tree-sub-branch">
-                  <button
-                    className={`tree-sub-header ${expandedSubBranches[child.id] ? 'active' : ''}`}
-                    onClick={() => toggleSubBranch(child.id)}
-                  >
-                    <span className="tree-connector"></span>
-                    <span className="tree-icon-small">{child.icon}</span>
-                    <span className="tree-sub-name">{child.name}</span>
-                    <TreeBranchIcon isExpanded={expandedSubBranches[child.id]} />
-                  </button>
-
-                  {/* Leaf Items */}
-                  <div className={`tree-items ${expandedSubBranches[child.id] ? 'expanded' : ''}`}>
-                    {child.items.map((item, index) => (
-                      <div
-                        key={item.name}
-                        className="tree-leaf"
-                        style={{ animationDelay: `${index * 0.05}s` }}
-                      >
-                        <span className="leaf-connector"></span>
-                        <span className="leaf-icon">{item.icon}</span>
-                        <span className="leaf-name">{item.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+      <div className="roadmap-flowchart">
+        {/* Top Card - CONCEPT */}
+        <div className="roadmap-top">
+          <div className="roadmap-card top-card">
+            <span className="roadmap-label">{roadmapData.top.label}</span>
+            <ul className="roadmap-items">
+              {roadmapData.top.items.map((item, i) => (
+                <li key={i}>{item}</li>
               ))}
-            </div>
+            </ul>
+            {/* Connector node bottom */}
+            <div className="connector-node bottom-node"></div>
           </div>
-        ))}
+          {/* Vertical line down */}
+          <div className="connector-line vertical-down"></div>
+        </div>
+
+        {/* Middle Row - 4 Cards */}
+        <div className="roadmap-middle">
+          {/* Horizontal line connecting all */}
+          <div className="connector-line horizontal-line"></div>
+
+          {roadmapData.middle.map((card, index) => (
+            <div key={card.id} className="roadmap-card-wrapper">
+              {/* Top connector node */}
+              <div className="connector-node top-node"></div>
+              <div className={`roadmap-card middle-card ${index === 3 ? 'highlight' : ''}`}>
+                <span className="roadmap-label">{card.label}</span>
+                <ul className="roadmap-items">
+                  {card.items.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom Card - DEVELOP */}
+        <div className="roadmap-bottom">
+          {/* Vertical line up */}
+          <div className="connector-line vertical-up"></div>
+          <div className="roadmap-card bottom-card">
+            {/* Connector node top */}
+            <div className="connector-node top-node"></div>
+            <span className="roadmap-label">{roadmapData.bottom.label}</span>
+            <ul className="roadmap-items">
+              {roadmapData.bottom.items.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -466,6 +345,32 @@ function ProjectsSection({ projects }) {
       <div className="projects-grid">
         {projects.map((project) => (
           <ProjectCard key={project.id || project.name} project={project} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// Big Social Icons Section - Below Projects
+function BigSocialSection() {
+  return (
+    <div className="big-social-section">
+      <h2 className="section-title">Let's Connect</h2>
+      <div className="big-social-icons">
+        {bigSocialLinks.map((link) => (
+          <a
+            key={link.name}
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="big-social-icon"
+            aria-label={link.name}
+          >
+            <div className="big-icon-wrapper">
+              <link.icon />
+            </div>
+            <span className="big-social-name">{link.name}</span>
+          </a>
         ))}
       </div>
     </div>
@@ -528,9 +433,31 @@ function App() {
   const [showPasswordModal, setShowPasswordModal] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
+  // Intro loading state - show Earth animation first, then reveal content
+  const [isLoading, setIsLoading] = useState(true)
+  const [contentVisible, setContentVisible] = useState(false)
+
   useEffect(() => {
     localStorage.setItem('linktree-projects', JSON.stringify(projects))
   }, [projects])
+
+  // Intro animation timer
+  useEffect(() => {
+    // Wait for Earth animation (3 seconds)
+    const loadingTimer = setTimeout(() => {
+      setIsLoading(false)
+    }, 3000)
+
+    // Slight delay before content starts fading in
+    const contentTimer = setTimeout(() => {
+      setContentVisible(true)
+    }, 2500)
+
+    return () => {
+      clearTimeout(loadingTimer)
+      clearTimeout(contentTimer)
+    }
+  }, [])
 
   const handleAdminClick = () => {
     if (isAuthenticated) {
@@ -552,13 +479,42 @@ function App() {
 
   return (
     <div className="app">
-      <ThreeBackground />
-      <main className="main-content">
-        <HeroSection />
-        <SocialIcons />
-        <TechSection />
-        <ProjectsSection projects={projects} />
-        <FooterSection />
+      <ThreeBackground isIntro={isLoading} />
+
+      {/* Intro Loading Overlay */}
+      {isLoading && (
+        <div className="intro-overlay">
+          <div className="intro-text">
+            <span className="intro-welcome">Welcome to my</span>
+            <span className="intro-universe">ɄƝƗVЄƦSЄ</span>
+            <span className="intro-tagline">✦ Explore beyond the limits ✦</span>
+          </div>
+        </div>
+      )}
+
+      {/* Main Content - fades in after intro */}
+      <Navbar className={contentVisible ? 'visible' : 'hidden'} />
+      <main className={`main-content ${contentVisible ? 'content-visible' : 'content-hidden'}`}>
+        {/* Section 1: Home */}
+        <section id="hero" className="page-section home-section">
+          <HeroSection />
+        </section>
+
+        {/* Section 2: Tech Stack */}
+        <section id="tech-section" className="page-section tech-page-section">
+          <TechSection />
+        </section>
+
+        {/* Section 3: Projects */}
+        <section id="projects-section" className="page-section projects-page-section">
+          <ProjectsSection projects={projects} />
+        </section>
+
+        {/* Section 4: Contact */}
+        <section id="footer-section" className="page-section contact-section">
+          <BigSocialSection />
+          <FooterSection />
+        </section>
       </main>
 
       {/* Admin Toggle Button */}

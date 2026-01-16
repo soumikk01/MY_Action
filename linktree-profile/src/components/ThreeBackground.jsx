@@ -1,6 +1,6 @@
 import React, { useRef, useMemo, useEffect, useState, Suspense } from 'react'
 import { Canvas, useFrame, useLoader, extend } from '@react-three/fiber'
-import { OrbitControls, Stars, shaderMaterial } from '@react-three/drei'
+import { OrbitControls, Stars, shaderMaterial, Trail } from '@react-three/drei'
 import * as THREE from 'three'
 import './ThreeBackground.css'
 
@@ -85,12 +85,13 @@ const AtmosphereMaterial = shaderMaterial(
 extend({ AtmosphereMaterial })
 
 // Earth component with all effects
-function Earth({ mouseX, mouseY, scrollY }) {
+function Earth({ mouseX, mouseY, scrollY, isIntro = false }) {
     const earthRef = useRef()
     const cloudsRef = useRef()
     const atmosRef = useRef()
     const groupRef = useRef()
     const nightRef = useRef()
+    const introProgress = useRef(0)
 
     // Load all textures
     const [albedoMap, bumpMap, oceanMap, cloudsMap, nightMap] = useLoader(
@@ -113,42 +114,83 @@ function Earth({ mouseX, mouseY, scrollY }) {
     useFrame((state) => {
         const elapsed = state.clock.elapsedTime
 
+        // Calculate scroll progress (0 to 1 based on page height)
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight
+        const scrollProgress = Math.min(scrollY / Math.max(docHeight, 1), 1)
+
         if (earthRef.current) {
-            // Slow rotation
-            earthRef.current.rotation.y = elapsed * 0.05
+            // Dynamic rotation speed - faster when scrolling through middle sections
+            const baseRotationSpeed = 0.15
+            const scrollBoost = Math.sin(scrollProgress * Math.PI) * 0.1 // Peak at middle
+            earthRef.current.rotation.y = elapsed * (baseRotationSpeed + scrollBoost)
         }
 
         if (cloudsRef.current) {
-            // Clouds rotate slightly faster
-            cloudsRef.current.rotation.y = elapsed * 0.07
+            // Clouds have extra dynamic rotation
+            const cloudSpeed = 0.17 + Math.sin(elapsed * 0.5) * 0.02
+            cloudsRef.current.rotation.y = elapsed * cloudSpeed
         }
 
         if (groupRef.current) {
-            // Earth's axial tilt is 23.5 degrees
+            // Earth's axial tilt with subtle wobble
             const axialTilt = (23.5 / 360) * 2 * Math.PI
+            const wobble = Math.sin(elapsed * 0.3) * 0.03
 
-            // Subtle mouse interaction
-            const targetRotationX = mouseY * 0.1
-            const targetRotationY = mouseX * 0.1
+            // Enhanced mouse interaction with smooth damping
+            const targetRotationX = mouseY * 0.15
+            const targetRotationY = mouseX * 0.15
 
             groupRef.current.rotation.x = THREE.MathUtils.lerp(
                 groupRef.current.rotation.x,
-                targetRotationY,
-                0.05
+                targetRotationY + wobble,
+                0.03 // Slower, smoother
             )
             groupRef.current.rotation.y = THREE.MathUtils.lerp(
                 groupRef.current.rotation.y,
                 -targetRotationX,
-                0.05
+                0.03
             )
-            groupRef.current.rotation.z = axialTilt
+            groupRef.current.rotation.z = axialTilt + Math.sin(elapsed * 0.2) * 0.02
 
-            // Scroll parallax - move Earth
-            const scrollOffset = scrollY * 0.002
+            // ===== ENHANCED SCROLL-BASED POSITION ANIMATION =====
+
+            // Earth X position: Smooth sine curve movement (more organic)
+            const easeProgress = (1 - Math.cos(scrollProgress * Math.PI)) / 2 // Ease in-out
+            const targetX = 4 - (easeProgress * 8) // 4 → 0 → -4
+
+            // Earth Y position: Floating effect + scroll parallax
+            const floatingY = Math.sin(elapsed * 0.5) * 0.15 // Gentle floating
+            const scrollY_offset = -scrollProgress * 1.5
+            const targetY = floatingY + scrollY_offset
+
+            // Earth Z position: Depth movement for 3D effect
+            const depthCurve = Math.sin(scrollProgress * Math.PI * 2) * 1.5 // Wave pattern
+            const targetZ = depthCurve
+
+            // Super smooth lerping for buttery animations
+            groupRef.current.position.x = THREE.MathUtils.lerp(
+                groupRef.current.position.x,
+                targetX,
+                0.04 // Very smooth
+            )
             groupRef.current.position.y = THREE.MathUtils.lerp(
                 groupRef.current.position.y,
-                -scrollOffset,
-                0.1
+                targetY,
+                0.06
+            )
+            groupRef.current.position.z = THREE.MathUtils.lerp(
+                groupRef.current.position.z,
+                targetZ,
+                0.05
+            )
+
+            // Dynamic scale: Breathe effect + scroll-based size
+            const breathe = 1 + Math.sin(elapsed * 0.4) * 0.02
+            const scrollScale = 1 + Math.sin(scrollProgress * Math.PI) * 0.2
+            const targetScale = breathe * scrollScale
+
+            groupRef.current.scale.setScalar(
+                THREE.MathUtils.lerp(groupRef.current.scale.x, targetScale, 0.03)
             )
 
             // Sync uv_xOffset for cloud shadows
@@ -170,19 +212,19 @@ function Earth({ mouseX, mouseY, scrollY }) {
     })
 
     return (
-        <group ref={groupRef} position={[0, 0, 0]}>
+        <group ref={groupRef} position={[3, 0, 0]}>
             {/* Main Earth sphere */}
             <mesh ref={earthRef}>
                 <sphereGeometry args={[2, 64, 64]} />
                 <meshStandardMaterial
                     map={albedoMap}
                     bumpMap={bumpMap}
-                    bumpScale={0.03}
+                    bumpScale={0.05}
                     roughnessMap={oceanMap}
-                    metalness={0.1}
+                    metalness={0.5}
                     metalnessMap={oceanMap}
                     emissiveMap={nightMap}
-                    emissive={new THREE.Color(0xffff88)}
+                    emissive={new THREE.Color(0xffaa55)} // Warmer city lights
                     onBeforeCompile={(shader) => {
                         shader.uniforms.tClouds = { value: cloudsMap }
                         shader.uniforms.tClouds.value.wrapS = THREE.RepeatWrapping
@@ -200,7 +242,8 @@ function Earth({ mouseX, mouseY, scrollY }) {
                                 vec4 texelRoughness = texture2D( roughnessMap, vRoughnessMapUv );
                                 // Reversing because ocean map is white for water
                                 texelRoughness = vec4(1.0) - texelRoughness;
-                                roughnessFactor *= clamp(texelRoughness.g, 0.5, 1.0);
+                                // Make oceans very shiny (0.15), land rough (1.0)
+                                roughnessFactor *= clamp(texelRoughness.g, 0.15, 1.0);
                             #endif
                         `);
 
@@ -209,10 +252,10 @@ function Earth({ mouseX, mouseY, scrollY }) {
                                 vec4 emissiveColor = texture2D( emissiveMap, vEmissiveMapUv );
                                 // Show lights only on dark side
                                 #if NUM_DIR_LIGHTS > 0
-                                    float lightMix = 1.0 - smoothstep(-0.02, 0.0, dot(vNormal, directionalLights[0].direction));
+                                    float lightMix = 1.0 - smoothstep(-0.1, 0.2, dot(vNormal, directionalLights[0].direction));
                                     emissiveColor *= lightMix;
                                 #endif
-                                totalEmissiveRadiance *= emissiveColor.rgb;
+                                totalEmissiveRadiance *= emissiveColor.rgb * 1.5; // Boost light intensity
                             #endif
 
                             // Cloud shadows
@@ -220,9 +263,9 @@ function Earth({ mouseX, mouseY, scrollY }) {
                             diffuseColor.rgb *= max(1.0 - cloudsMapValue, 0.2);
 
                             // Atmospheric fresnel on Earth surface
-                            float intensity = 1.4 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) );
-                            vec3 atmosphere = vec3( 0.3, 0.6, 1.0 ) * pow(intensity, 5.0);
-                            diffuseColor.rgb += atmosphere;
+                            float intensity = 1.3 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) );
+                            vec3 atmosphere = vec3( 0.3, 0.6, 1.0 ) * pow(intensity, 4.0);
+                            diffuseColor.rgb += atmosphere * 0.5;
                         `);
 
                         earthRef.current.material.userData.shader = shader
@@ -258,6 +301,12 @@ function Earth({ mouseX, mouseY, scrollY }) {
             <mesh ref={moonRef} scale={0.15}>
                 <sphereGeometry args={[1, 12, 12]} />
                 <meshStandardMaterial color="#cccccc" roughness={0.9} />
+            </mesh>
+
+            {/* Visual Moon Orbit Path */}
+            <mesh rotation={[Math.PI / 2, 0, 0]}>
+                <torusGeometry args={[10, 0.02, 16, 100]} />
+                <meshBasicMaterial color="#ffffff" opacity={0.1} transparent />
             </mesh>
         </group>
     )
@@ -305,9 +354,30 @@ function CosmicParticles({ mouseX, mouseY, scrollY }) {
 
     useFrame((state) => {
         if (particlesRef.current) {
-            particlesRef.current.rotation.y = state.clock.elapsedTime * 0.02 + mouseX * 0.1
-            particlesRef.current.rotation.x = mouseY * 0.1
-            particlesRef.current.position.y = -scrollY * 0.002
+            const elapsed = state.clock.elapsedTime
+
+            // Calculate scroll progress
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight
+            const scrollProgress = Math.min(scrollY / Math.max(docHeight, 1), 1)
+
+            // Dynamic rotation - particles swirl as you scroll
+            const baseRotation = elapsed * 0.02
+            const scrollRotation = scrollProgress * Math.PI * 0.5 // Extra rotation based on scroll
+            particlesRef.current.rotation.y = baseRotation + scrollRotation + mouseX * 0.15
+            particlesRef.current.rotation.x = Math.sin(elapsed * 0.3) * 0.1 + mouseY * 0.15
+
+            // Particles follow Earth's X journey
+            const particleX = 2 - (scrollProgress * 4) // Slight offset from Earth
+            particlesRef.current.position.x = THREE.MathUtils.lerp(
+                particlesRef.current.position.x,
+                particleX,
+                0.03
+            )
+            particlesRef.current.position.y = -scrollProgress * 1 + Math.sin(elapsed * 0.4) * 0.2
+
+            // Pulse scale effect
+            const pulse = 1 + Math.sin(elapsed * 0.8) * 0.1
+            particlesRef.current.scale.setScalar(pulse)
         }
     })
 
@@ -339,58 +409,179 @@ function CosmicParticles({ mouseX, mouseY, scrollY }) {
     )
 }
 
-// Orbital ring decoration
-function OrbitalRing({ radius, color, rotationSpeed, tilt }) {
-    const ringRef = useRef()
+
+
+
+
+// Animated Comet
+function Comet() {
+    const cometRef = useRef()
 
     useFrame((state) => {
-        if (ringRef.current) {
-            ringRef.current.rotation.z = state.clock.elapsedTime * rotationSpeed
+        if (cometRef.current) {
+            // Move comet
+            cometRef.current.position.x -= 0.15
+            cometRef.current.position.y -= 0.05
+            cometRef.current.position.z += 0.05
+
+            // Reset when out of view
+            if (cometRef.current.position.x < -15) {
+                const randomDelay = Math.random() * 5
+                cometRef.current.position.x = 15 + Math.random() * 10 + randomDelay
+                cometRef.current.position.y = 10 + Math.random() * 5
+                cometRef.current.position.z = -10 + Math.random() * 5
+            }
         }
     })
 
     return (
-        <mesh ref={ringRef} rotation={[tilt, 0, 0]} position={[3, 0, 0]}>
-            <torusGeometry args={[radius, 0.02, 16, 100]} />
-            <meshBasicMaterial color={color} transparent opacity={0.3} />
+        <mesh ref={cometRef} position={[20, 10, -10]}>
+            {/* Dynamic light from comet */}
+            <pointLight distance={25} intensity={5} color="#22d3ee" decay={2} />
+
+            <Trail
+                width={3}
+                length={12}
+                color={new THREE.Color('#22d3ee')}
+                attenuation={(t) => t * t}
+            >
+                <mesh>
+                    <sphereGeometry args={[0.2, 16, 16]} />
+                    <meshBasicMaterial color="#ffffff" toneMapped={false} />
+                </mesh>
+            </Trail>
+
+            {/* Glow effect */}
+            <mesh>
+                <sphereGeometry args={[0.5, 16, 16]} />
+                <meshBasicMaterial color="#22d3ee" transparent opacity={0.2} />
+            </mesh>
         </mesh>
     )
 }
 
-// Floating geometric accents
-function FloatingAccent({ position, color, mouseX, mouseY }) {
-    const meshRef = useRef()
-    const initialPos = useMemo(() => new THREE.Vector3(...position), [position])
+// Detailed Satellite (ISS-like)
+function Satellite({ radius = 4.5, speed = 0.2, tilt = 0, initialAngle = 0, scale = 0.15 }) {
+    const satRef = useRef()
+    const solarRef = useRef()
 
     useFrame((state) => {
-        if (meshRef.current) {
-            meshRef.current.rotation.x = state.clock.elapsedTime * 0.3
-            meshRef.current.rotation.y = state.clock.elapsedTime * 0.2
+        if (satRef.current) {
+            // Orbit logic
+            const time = state.clock.elapsedTime * speed + initialAngle
 
-            meshRef.current.position.x = initialPos.x + mouseX * 0.5
-            meshRef.current.position.y = initialPos.y + mouseY * 0.5 + Math.sin(state.clock.elapsedTime) * 0.3
+            // Parametric orbit equation
+            satRef.current.position.x = Math.sin(time) * radius + 3.5
+            satRef.current.position.z = Math.cos(time) * radius
+            satRef.current.position.y = Math.cos(time * 0.5) * (radius * 0.3)
+
+            // Rotation
+            satRef.current.rotation.y = time
+            satRef.current.rotation.z = Math.sin(time) * 0.2
+            satRef.current.rotation.x = tilt
+        }
+    })
+
+    // Blinking light logic
+    const [blink, setBlink] = useState(false)
+    useEffect(() => {
+        const interval = setInterval(() => setBlink(b => !b), 1000)
+        return () => clearInterval(interval)
+    }, [])
+
+    return (
+        <group ref={satRef} scale={scale}>
+            {/* Main Body - Foil covered */}
+            <mesh position={[0, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+                <cylinderGeometry args={[0.5, 0.5, 2.5, 8]} />
+                <meshStandardMaterial color="#e0c090" metalness={0.9} roughness={0.3} />
+            </mesh>
+
+            {/* Habitation Module */}
+            <mesh position={[1.5, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+                <cylinderGeometry args={[0.3, 0.3, 1, 8]} />
+                <meshStandardMaterial color="#cccccc" metalness={0.6} roughness={0.4} />
+            </mesh>
+
+            {/* Docking Port */}
+            <mesh position={[2.1, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+                <cylinderGeometry args={[0.15, 0.15, 0.2, 8]} />
+                <meshStandardMaterial color="#333333" />
+            </mesh>
+
+            {/* Solar Array Truss */}
+            <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+                <cylinderGeometry args={[0.05, 0.05, 6, 8]} />
+                <meshStandardMaterial color="#888888" />
+            </mesh>
+
+            {/* Solar Panels (Detailed) */}
+            <group ref={solarRef}>
+                {/* Left Arrays */}
+                <mesh position={[0, 0, 2]}>
+                    <boxGeometry args={[1.2, 0.02, 3]} />
+                    <meshStandardMaterial color="#102050" metalness={0.9} roughness={0.2} side={THREE.DoubleSide} />
+                </mesh>
+
+                {/* Right Arrays */}
+                <mesh position={[0, 0, -2]}>
+                    <boxGeometry args={[1.2, 0.02, 3]} />
+                    <meshStandardMaterial color="#102050" metalness={0.9} roughness={0.2} side={THREE.DoubleSide} />
+                </mesh>
+            </group>
+
+            {/* Comms Dish */}
+            <group position={[-0.8, 0.8, 0]} rotation={[0, 0, Math.PI / 3]}>
+                <mesh>
+                    <sphereGeometry args={[0.4, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.4]} />
+                    <meshStandardMaterial color="#eeeeee" side={THREE.DoubleSide} metalness={0.5} />
+                </mesh>
+                <mesh position={[0, 0.4, 0]}>
+                    <cylinderGeometry args={[0.02, 0.02, 0.4]} />
+                    <meshBasicMaterial color="#333333" />
+                </mesh>
+            </group>
+
+            {/* Blinking Navigation Light */}
+            <mesh position={[1.8, 0.4, 0]}>
+                <sphereGeometry args={[0.08, 8, 8]} />
+                <meshBasicMaterial color={blink ? "#ff0000" : "#330000"} />
+                {blink && <pointLight color="#ff0000" intensity={1} distance={2} />}
+            </mesh>
+        </group>
+    )
+}
+
+// Enhanced Sun with Glow and Orbit - Hidden Mesh
+function Sun() {
+    const sunGroup = useRef()
+
+    useFrame((state) => {
+        if (sunGroup.current) {
+            const time = state.clock.elapsedTime * 0.05 // Very slow orbit
+            sunGroup.current.position.x = Math.sin(time) * 60
+            sunGroup.current.position.z = Math.cos(time) * 60 - 20
+            sunGroup.current.position.y = 20 + Math.cos(time * 0.5) * 10
+
+            sunGroup.current.lookAt(0, 0, 0)
         }
     })
 
     return (
-        <mesh ref={meshRef} position={position}>
-            <octahedronGeometry args={[0.3, 0]} />
-            <meshBasicMaterial color={color} wireframe transparent opacity={0.5} />
-        </mesh>
+        <group ref={sunGroup}>
+            {/* Light Source - Only this remains */}
+            <directionalLight intensity={2.5} color="#ffffff" castShadow />
+        </group>
     )
 }
 
 // Main scene
-function Scene({ mouseX, mouseY, scrollY }) {
+function Scene({ mouseX, mouseY, scrollY, isIntro }) {
     return (
         <>
             {/* Lighting */}
             <ambientLight intensity={0.05} />
-            <directionalLight
-                position={[-15, 10, 10]}
-                intensity={2.5}
-                color="#ffffff"
-            />
+            {/* Directional Light moved to Sun component for correct shadows/shading direction */}
 
             {/* Stars background - use Drei's optimized component */}
             <Stars
@@ -403,36 +594,35 @@ function Scene({ mouseX, mouseY, scrollY }) {
                 speed={0.2}
             />
 
-            {/* Sun Glow Representation */}
-            <mesh position={[-50, 30, 30]}>
-                <sphereGeometry args={[5, 32, 32]} />
-                <meshBasicMaterial color="#ffffcc" />
-            </mesh>
+            {/* Enhanced Sun */}
+            <Sun />
 
             {/* Main Earth */}
-            <Earth mouseX={mouseX} mouseY={mouseY} scrollY={scrollY} />
+            <Earth mouseX={mouseX} mouseY={mouseY} scrollY={scrollY} isIntro={isIntro} />
+
+            {/* Satellite Station */}
+            <Satellite radius={4.5} speed={0.2} tilt={0} initialAngle={0} scale={0.15} />
+            <Satellite radius={5.5} speed={0.15} tilt={0.5} initialAngle={Math.PI} scale={0.1} />
 
             {/* Cosmic particles */}
             <CosmicParticles mouseX={mouseX} mouseY={mouseY} scrollY={scrollY} />
 
-            {/* Orbital rings */}
-            <OrbitalRing radius={3} color="#a3e635" rotationSpeed={0.1} tilt={Math.PI / 4} />
-            <OrbitalRing radius={3.5} color="#22d3ee" rotationSpeed={-0.08} tilt={-Math.PI / 3} />
+            {/* Animated Comet */}
+            <Comet />
 
-            {/* Floating accents */}
-            <FloatingAccent position={[4, 2, -3]} color="#a3e635" mouseX={mouseX} mouseY={mouseY} />
-            <FloatingAccent position={[5, -2, -2]} color="#22d3ee" mouseX={mouseX} mouseY={mouseY} />
-            <FloatingAccent position={[3, 3, -4]} color="#a855f7" mouseX={mouseX} mouseY={mouseY} />
+
+
+
         </>
     )
 }
 
 // Canvas wrapper
-function CanvasContent() {
+function CanvasContent({ isIntro }) {
     const mousePosition = useMousePosition()
     const scrollY = useScrollPosition()
 
-    return <Scene mouseX={mousePosition.x} mouseY={mousePosition.y} scrollY={scrollY} />
+    return <Scene mouseX={mousePosition.x} mouseY={mousePosition.y} scrollY={scrollY} isIntro={isIntro} />
 }
 
 // Loading fallback
@@ -445,7 +635,7 @@ function Loader() {
     )
 }
 
-export default function ThreeBackground() {
+export default function ThreeBackground({ isIntro = false }) {
     return (
         <div className="three-background">
             <Canvas
@@ -454,9 +644,10 @@ export default function ThreeBackground() {
                 gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
             >
                 <React.Suspense fallback={<Loader />}>
-                    <CanvasContent />
+                    <CanvasContent isIntro={isIntro} />
                 </React.Suspense>
             </Canvas>
         </div>
     )
 }
+
